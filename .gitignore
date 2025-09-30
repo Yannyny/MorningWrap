@@ -1,0 +1,10 @@
+# virtual env
+.venv/
+# environment file with secrets
+.env
+# uv lock files
+uv.lock
+# python
+__pycache__/
+*.pyc
+.DS_Store
