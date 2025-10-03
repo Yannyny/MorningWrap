@@ -10,7 +10,7 @@ def main():
     print("Generating your daily Orennia jobs review...")
 
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
+        resp = requests.get(url, timeout=15)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
     except requests.RequestException as e:
