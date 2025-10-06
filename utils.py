@@ -1,6 +1,4 @@
-# utils.py
 from typing import Optional
-import json
 import ollama
 import logging
 from urllib.parse import urljoin
@@ -93,7 +91,7 @@ def generate_summary_with_ai(title: str, url: str, soup: Optional[BeautifulSoup]
         Produce an answer with these keys:
             1) summary: a 2-3 sentence concise summary (what the role is and why it matters)
             2) skills: a short comma-separated list of the most important skills/technologies required
-            3) fit: a grade (from 1 to 10 - respectively being a bad fit and a perfect fit - in the format "[x/10]", x being the chosen grade) and one concise sentence assessing match for the candidate described above (e.g. "Good fit — leverages sport knowledge + data skills")
+            3) fit: a grade (from 1 to 10 - respectively being a bad fit and a perfect fit - in the format "[x/10]", x being the chosen grade) and one concise sentence assessing match for the candidate described above (e.g. "Bad fit — does not leverage sport knowledge + does not include data skills")
             4) location_tags: short string describing location/remote (e.g. "Calgary, AB; Remote possible")
 
         Use short, precise phrases. Do not output markdown or explanation.
