@@ -1,10 +1,11 @@
-from typing import List, Dict
-from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-def parse_enmax_job_list_from_html(html_str: str, base_url: str) -> List[Dict]:
+from bs4 import BeautifulSoup
+
+
+def parse_enmax_job_list_from_html(html_str: str, base_url: str) -> list[dict]:
     soup = BeautifulSoup(html_str, "html.parser")
-    job_listings: List[Dict] = []
+    job_listings: list[dict] = []
     uls = soup.find_all("ul", {"role": "list"})
     target_uls = []
     for u in uls:

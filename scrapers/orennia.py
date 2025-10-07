@@ -1,11 +1,12 @@
-from typing import List, Dict
-from bs4 import BeautifulSoup
 import time
+
+from bs4 import BeautifulSoup
+
 # from utils import fetch_job_page
 
-def parse_orennia_job_list_from_html(html_str: str, base_url: str) -> List[Dict]:
+def parse_orennia_job_list_from_html(html_str: str, base_url: str) -> list[dict]:
     soup = BeautifulSoup(html_str, "html.parser")
-    job_listings: List[Dict] = []
+    job_listings: list[dict] = []
 
     for section in soup.find_all('section'):
         category = section.find('h3')

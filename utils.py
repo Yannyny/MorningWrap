@@ -1,16 +1,16 @@
-from typing import Optional
+import logging
 from urllib.parse import urljoin
+
 import requests
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
-import logging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("morningwrap")
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "MorningWrap/1.0 (+https://github.com/Yannyny/MorningWrap)"})
 
-def fetch_careers_html(url: str, render: bool = False) -> Optional[str]:
+def fetch_careers_html(url: str, render: bool = False) -> str | None:
     """
     Return raw HTML string. If render=True, use Playwright to get rendered HTML.
     """
@@ -37,7 +37,7 @@ def fetch_careers_html(url: str, render: bool = False) -> Optional[str]:
         logger.warning("Playwright render failed: %s", e)
         return None
 
-def fetch_job_page(href: str, base_url: str = "") -> Optional[BeautifulSoup]:
+def fetch_job_page(href: str, base_url: str = "") -> BeautifulSoup | None:
     if not href:
         return None
     try:
@@ -49,7 +49,7 @@ def fetch_job_page(href: str, base_url: str = "") -> Optional[BeautifulSoup]:
         logger.warning("fetch_job_page failed for %s: %s", href, e)
         return None
 
-def safe_truncate_text(soup: Optional[BeautifulSoup], max_chars: int = 10000) -> str:
+def safe_truncate_text(soup: BeautifulSoup | None, max_chars: int = 10000) -> str:
     if soup is None:
         return ""
     try:

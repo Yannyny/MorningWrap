@@ -1,5 +1,5 @@
-from utils import fetch_careers_html, log_jobs, logger
 from scrapers.orennia import parse_orennia_job_list_from_html
+from utils import fetch_careers_html, log_jobs, logger
 
 URL = "https://orennia.com/careers"
 BASE = "https://orennia.com"

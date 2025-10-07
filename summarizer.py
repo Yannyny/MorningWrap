@@ -1,8 +1,9 @@
-from typing import Optional
-from bs4 import BeautifulSoup
 import json
+
 import ollama
-from utils import safe_truncate_text, logger
+from bs4 import BeautifulSoup
+
+from utils import logger, safe_truncate_text
 
 AI_MODEL = "gemma3:4b"
 
@@ -31,7 +32,7 @@ PROMPT_SYSTEM = (
 "Tailor outreach to positions that align with the candidate's skills and interests."
 )
 
-def generate_summary_with_ai(title: str, url: str, soup: Optional[BeautifulSoup] = None, model: str = AI_MODEL) -> str:
+def generate_summary_with_ai(title: str, url: str, soup: BeautifulSoup | None = None, model: str = AI_MODEL) -> str:
     job_text = safe_truncate_text(soup, max_chars=10000)
 
     prompt_user = f"""

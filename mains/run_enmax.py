@@ -1,5 +1,5 @@
-from utils import fetch_careers_html, log_jobs, logger
 from scrapers.enmax import parse_enmax_job_list_from_html
+from utils import fetch_careers_html, log_jobs, logger
 
 URL = "https://enmax.wd3.myworkdayjobs.com/en-US/ENMAXCareers/jobs"
 BASE = "https://enmax.wd3.myworkdayjobs.com"

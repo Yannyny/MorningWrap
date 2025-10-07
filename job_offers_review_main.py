@@ -1,14 +1,14 @@
 # main.py
 import argparse
-import requests
+
 import feedparser
 import ollama
-from typing import List, Dict, Optional
+import requests
 from bs4 import BeautifulSoup
 
 AI_MODEL = 'mistral'
 
-def fetch_remoteok() -> List[Dict]:
+def fetch_remoteok() -> list[dict]:
     """Fetch the RemoteOK JSON feed (fallback if blocked)."""
     url = "https://remoteok.com/remote-jobs.json"  # RemoteOK exposes JSON / feed; adjust if changed
     try:
@@ -22,7 +22,7 @@ def fetch_remoteok() -> List[Dict]:
         print(f"[remoteok] error: {e}")
         return []
 
-def fetch_weworkremotely_rss() -> List[Dict]:
+def fetch_weworkremotely_rss() -> list[dict]:
     """Fetch WeWorkRemotely RSS and convert into a simple dict list."""
     rss_url = "https://weworkremotely.com/categories/remote-programming-jobs.rss"
     try:
@@ -39,7 +39,7 @@ def fetch_weworkremotely_rss() -> List[Dict]:
         print(f"[wwr] error: {e}")
         return []
 
-def matches_criteria(title: str, summary: str, keywords: List[str], location: Optional[str]) -> bool:
+def matches_criteria(title: str, summary: str, keywords: list[str], location: str | None) -> bool:
     text = (title + " " + (summary or "")).lower()
     if keywords:
         if not any(k.lower().strip() in text for k in keywords):
@@ -50,7 +50,7 @@ def matches_criteria(title: str, summary: str, keywords: List[str], location: Op
             return False
     return True
 
-def generate_summary_with_ai(title: str, link: str, job_text: Optional[str]) -> str:
+def generate_summary_with_ai(title: str, link: str, job_text: str | None) -> str:
     prompt = f"""
 You are a technical recruiter assistant. Summarize this job posting in 2 concise bullet points:
 - core responsibilities and required skills
@@ -69,7 +69,7 @@ JOB_TEXT: {job_text or 'N/A'}
     except Exception as e:
         return f"AI summary error: {e}\n(Make sure Ollama is running and model {AI_MODEL} is available.)"
 
-def normalize_remoteok_item(item: Dict) -> Dict:
+def normalize_remoteok_item(item: dict) -> dict:
     # map RemoteOK fields into a common shape
     return {
         "title": item.get("position") or item.get("title"),
@@ -78,7 +78,7 @@ def normalize_remoteok_item(item: Dict) -> Dict:
         "description": item.get("description") or item.get("tags") or "",
     }
 
-def main():
+def main():  # noqa: C901
     parser = argparse.ArgumentParser(description="AI job-finder (RemoteOK + WWR example)")
     parser.add_argument("--keywords", "-k", type=str, default="", help="Comma-separated keywords, e.g. 'python,backend'")
     parser.add_argument("--location", "-l", type=str, default="", help="Location or 'remote'")

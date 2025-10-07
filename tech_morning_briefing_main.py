@@ -1,6 +1,6 @@
-import requests
+
 import ollama
-from typing import List, Dict, Optional
+import requests
 
 # --- CONFIGURATION ---
 # Number of top articles from Hacker News you want to summarize
@@ -10,7 +10,7 @@ NUMBER_OF_ARTICLES = 5
 AI_MODEL = 'mistral'
 # ---------------------
 
-def get_hn_top_story_ids() -> List[int]:
+def get_hn_top_story_ids() -> list[int]:
     """Gets the IDs of the top stories from the Hacker News API."""
     try:
         url = "https://hacker-news.firebaseio.com/v0/topstories.json"
@@ -21,7 +21,7 @@ def get_hn_top_story_ids() -> List[int]:
         print(f"Error fetching story IDs from Hacker News: {e}")
         return []
 
-def get_article_details(story_id: int) -> Optional[Dict]:
+def get_article_details(story_id: int) -> dict | None:
     """Gets the details (title, url) of a specific article by its ID."""
     try:
         url = f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
