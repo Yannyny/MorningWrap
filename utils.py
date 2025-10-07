@@ -4,6 +4,7 @@ import logging
 from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 AI_MODEL = 'mistral'
 
@@ -12,6 +13,48 @@ logger = logging.getLogger("morningwrap")
 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": "MorningWrap/1.0 (+https://github.com/Yannyny/MorningWrap)"})
+
+def print_jobs(job_listings):
+    for idx, job in enumerate(job_listings, start=1):
+        print(f"Job n°{idx}:")
+        title = job['title']
+        href = job['href']
+        summary = generate_summary_with_ai(title, href, job.get('soup'))
+        print(f"📰 Title: {title}")
+        print(f"📍 Location: {job['location']}")
+        print(f"🔗 Link: {href}")
+        if job.get('category'):
+            print(f"🔖 Category: {job['category']}")
+        if job.get('posted_on'):
+            print(f"📅 Posted on: {job['posted_on']}")
+        print(f"📝 AI Summary: {summary}\n")
+        print("---------------------------------------------\n")
+
+def fetch_careers_html(url, static=True) -> Optional[str]:
+    """Either get static HTML from request or render the URL with Playwright before returning page HTML (rendered page)."""
+    if static:
+        try:
+            resp = requests.get(url, timeout=15)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+            return soup
+        except requests.RequestException as e:
+            print(f"Failed to fetch careers page %s: %s", url, e)
+            return
+    else:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                page.set_extra_http_headers(SESSION.headers)
+                page.goto(url, timeout=60000)
+                page.wait_for_timeout(1500)
+                html = page.content()
+                browser.close()
+                return html
+        except Exception as e:
+            print("Playwright render failed:", e)
+            return None
 
 def fetch_job_page(href: str, base_url: str = "") -> Optional[BeautifulSoup]:
     """Return BeautifulSoup or None. Ensures absolute URL using base_url."""

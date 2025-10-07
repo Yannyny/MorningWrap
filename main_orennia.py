@@ -1,25 +1,11 @@
-from typing import Optional, List, Dict
+from typing import List, Dict
 import time
-import requests
-from bs4 import BeautifulSoup
-from utils import generate_summary_with_ai, fetch_job_page
+from utils import fetch_job_page, fetch_careers_html, print_jobs
 
-def main():
-    """Main function to generate and print the Orennia jobs review."""
-    url = "https://orennia.com/careers"
-    print("Generating your daily Orennia jobs review...")
-
-    try:
-        resp = requests.get(url, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
-    except requests.RequestException as e:
-        print(f"Failed to fetch careers page %s: %s", url, e)
-        return
-    
+def parse_orennia_job_list_from_html(html: str) -> List[Dict]:
     job_listings: List[Dict] = []
 
-    for section in soup.find_all('section'):
+    for section in html.find_all('section'):
         category = section.find('h3')
         if category:
             category_name = category.get_text(strip=True)
@@ -37,29 +23,19 @@ def main():
                     'href': href,
                     'soup': job_soup
                 })
+    return job_listings
 
-    for job in job_listings:
-        print(f"Category: {job['category']}, Title: {job['title']}, Location: {job['location']}, URL: {job['href']}")
-        if job['soup']:
-            print(f"Job page soup available with {len(job['soup'].text)} characters of text\n")
-
+def main():
+    """Main function to generate and print the Orennia jobs review."""
+    url = "https://orennia.com/careers"
+    print("Generating your daily Orennia jobs review...")
+    html = fetch_careers_html(url)
+    job_listings = parse_orennia_job_list_from_html(html)
     print("\n=============================================")
     print("✨ ORENNIA JOBS REVIEW ✨")
     print("=============================================\n")
-
-    job_nb = 1
-    for job in job_listings:
-        title = job['title']
-        href = job['href']
-        print(f"Job n°{job_nb}:")
-        summary = generate_summary_with_ai(title, url, job['soup'])
-        print(f"🔖 Category: {job['category']}")
-        print(f"📰 Title: {title}")
-        print(f"📍 Location: {job['location']}")
-        print(f"🔗 Link: {href}")
-        print(f"📝 AI Summary: {summary}\n")
-        print("---------------------------------------------\n")
-        job_nb += 1
+    print(f"Found {len(job_listings)} job(s).")
+    print_jobs(job_listings)
 
 if __name__ == "__main__":
     main()
