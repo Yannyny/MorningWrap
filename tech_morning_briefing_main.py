@@ -1,4 +1,3 @@
-
 import ollama
 import requests
 
@@ -29,7 +28,7 @@ def get_article_details(story_id: int) -> dict | None:
         response.raise_for_status()
         return response.json()
     except requests.RequestException:
-        return None # Return None if fetching details fails
+        return None
 
 def generate_summary_with_ai(title: str, url: str) -> str:
     """Uses a local LLM via Ollama to generate a summary of an article."""
@@ -71,7 +70,6 @@ def main():
             break
         
         details = get_article_details(story_id)
-        # We only want to summarize actual articles, which typically have a URL
         if details and 'title' in details and 'url' in details:
             title = details['title']
             article_url = details['url']

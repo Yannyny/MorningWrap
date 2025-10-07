@@ -19,5 +19,5 @@ uv run python -m mains.run_enmax
 
 For article review:
 ```
-uv run python tech_morning_briefing_main.py --help
+uv run python tech_morning_briefing_main.py
 ```

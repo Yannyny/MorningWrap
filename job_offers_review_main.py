@@ -1,4 +1,3 @@
-# main.py
 import argparse
 
 import feedparser
@@ -10,12 +9,11 @@ AI_MODEL = 'mistral'
 
 def fetch_remoteok() -> list[dict]:
     """Fetch the RemoteOK JSON feed (fallback if blocked)."""
-    url = "https://remoteok.com/remote-jobs.json"  # RemoteOK exposes JSON / feed; adjust if changed
+    url = "https://remoteok.com/remote-jobs.json"
     try:
         resp = requests.get(url, timeout=10, headers={"User-Agent":"job-finder-bot/1.0"})
         resp.raise_for_status()
         data = resp.json()
-        # the feed often includes metadata as the first item or with non-job entries; filter by having 'position' or 'company'
         jobs = [item for item in data if isinstance(item, dict) and item.get("position") or item.get("company")]
         return jobs
     except Exception as e:
@@ -45,7 +43,6 @@ def matches_criteria(title: str, summary: str, keywords: list[str], location: st
         if not any(k.lower().strip() in text for k in keywords):
             return False
     if location:
-        # coarse location match — many remote jobs won't have a location, so treat "remote" specially
         if location.lower() not in text and "remote" not in location.lower() and "remote" not in text:
             return False
     return True
@@ -70,7 +67,6 @@ JOB_TEXT: {job_text or 'N/A'}
         return f"AI summary error: {e}\n(Make sure Ollama is running and model {AI_MODEL} is available.)"
 
 def normalize_remoteok_item(item: dict) -> dict:
-    # map RemoteOK fields into a common shape
     return {
         "title": item.get("position") or item.get("title"),
         "company": item.get("company"),
