@@ -4,20 +4,20 @@
 
 For job search:
 ```
-uv run --env-file=.env python job_offers_review_main.py --keywords "grid, AI, ML, engineer" --location "canada, calgary" --max 5
+uv run python job_offers_review_main.py --keywords "grid, AI, ML, engineer" --location "canada, calgary" --max 5
 ```
 
 For Orennia specific job search:
 ```
-uv run --env-file=.env python main_orennia.py
+uv run python -m mains.run_orennia
 ```
 
 For ENMAX specific job search:
 ```
-uv run --env-file=.env python main_enmax.py
+uv run python -m mains.run_enmax
 ```
 
 For article review:
 ```
-uv run --env-file=.env python tech_morning_briefing_main.py --help
+uv run python tech_morning_briefing_main.py --help
 ```

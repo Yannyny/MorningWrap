@@ -3,11 +3,8 @@ import argparse
 import requests
 import feedparser
 import ollama
-from dotenv import load_dotenv
 from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
-
-load_dotenv()  # loads .env into os.environ
 
 AI_MODEL = 'mistral'
 
