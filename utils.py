@@ -58,20 +58,30 @@ def safe_truncate_text(soup: BeautifulSoup | None, max_chars: int = 10000) -> st
     except Exception:
         return ""
 
-def log_jobs(job_listings):
+def log_job(job, idx):
     from summarizer import generate_summary_with_ai
 
+    title = job['title']
+    url = job.get('url')
+    summary = generate_summary_with_ai(title, url, job.get('soup'))
+    lines = [
+        "---------------------------------------------",
+        f"Job n°{idx}",
+        f"📰 Title: {title}",
+        f"📍 Location: {job.get('location', 'N/A')}",
+        f"🔗 Link: {url or 'N/A'}"
+    ]
+
+    if job.get('category'):
+        lines.append(f"🔖 Category: {job['category']}")
+    if job.get('posted_on'):
+        lines.append(f"📅 Posted on: {job['posted_on']}")
+
+    lines.append(f"📝 AI Summary: {summary}")
+    lines.append("---------------------------------------------")
+    logger.info("\n".join(lines))
+
+
+def log_jobs(job_listings):
     for idx, job in enumerate(job_listings, start=1):
-        logger.info(f"Job n°{idx}:")
-        title = job['title']
-        url = job.get('url')        
-        logger.info(f"📰 Title: {title}")
-        logger.info(f"📍 Location: {job.get('location')}")
-        logger.info(f"🔗 Link: {url}")
-        if job.get('category'):
-            logger.info(f"🔖 Category: {job['category']}")
-        if job.get('posted_on'):
-            logger.info(f"📅 Posted on: {job['posted_on']}")
-        summary = generate_summary_with_ai(title, url, job.get('soup'))
-        logger.info(f"📝 AI Summary: {summary}")
-        logger.info("---------------------------------------------")
+        log_job(job, idx)
